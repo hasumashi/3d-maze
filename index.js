@@ -1,14 +1,8 @@
 'use strict';
 
 import './index.css';
-let audioUrl = require('./fireloop.mp3');
-console.log(audioUrl)
 import * as THREE from 'three';
 window.three = THREE;
-
-// import 'three-orbit-controls';
-// console.log(OrbitControls)
-// const orbitControls = OrbitControls(THREE)
 
 // "config"
 const RESOLUTION = { w: 80, h: 50 };
@@ -16,7 +10,7 @@ const RESOLUTION = { w: 80, h: 50 };
 // globals
 let camera, scene, renderer;
 let geometry, material, gemMesh;
-let fireAudio;
+let fireAudio, coinAudio;
 
 let playerPos;
 let MAZE_SIZE;
@@ -95,6 +89,7 @@ function init() {
 
 		if (nextPlayerPos[0] === finishPos[0] && nextPlayerPos[1] === finishPos[1]) {
 			console.log('COLLECTED GEM!');
+			coinAudio.play();
 			scene.remove(gemMesh);
 		}
 
@@ -111,12 +106,18 @@ function init() {
 
 	// load a sound and set it as the Audio object's buffer
 	var audioLoader = new THREE.AudioLoader();
-	audioLoader.load(audioUrl, function (buffer) {
+	audioLoader.load(require('./fireloop.mp3'), function (buffer) {
 		fireAudio.setBuffer(buffer);
 		fireAudio.setLoop(true);
-		// fireAudio.setVolume(0.5);
 		fireAudio.setVolume(1 - (playerPos[1] / MAZE_SIZE[0]));
-		fireAudio.play();
+		// fireAudio.play();
+	});
+
+	coinAudio = new THREE.Audio(new THREE.AudioListener());
+	new THREE.AudioLoader().load(require('./dragon-coin.wav'), buffer => {
+		coinAudio.setBuffer(buffer);
+		coinAudio.setLoop(false);
+		coinAudio.setVolume(1);
 	});
 }
 
