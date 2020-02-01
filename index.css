@@ -1,0 +1,17 @@
+html, body {
+	background: #111;
+}
+
+.centered {
+    position: relative;
+	left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+#renderer {
+	margin: auto;
+	width: 960px !important;
+	height: 600px !important;
+	image-rendering: pixelated;
+}
