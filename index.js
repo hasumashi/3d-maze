@@ -110,7 +110,7 @@ function init() {
 		fireAudio.setBuffer(buffer);
 		fireAudio.setLoop(true);
 		fireAudio.setVolume(1 - (playerPos[1] / MAZE_SIZE[0]));
-		// fireAudio.play();
+		fireAudio.play();
 	});
 
 	coinAudio = new THREE.Audio(new THREE.AudioListener());
