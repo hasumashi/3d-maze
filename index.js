@@ -1,6 +1,8 @@
 'use strict';
 
 import './index.css';
+let audioUrl = require('./fireloop.mp3');
+console.log(audioUrl)
 import * as THREE from 'three';
 window.three = THREE;
 
@@ -14,6 +16,7 @@ const RESOLUTION = { w: 80, h: 50 };
 // globals
 let camera, scene, renderer;
 let geometry, material, gemMesh;
+let fireAudio;
 
 let playerPos;
 let MAZE_SIZE;
@@ -88,6 +91,8 @@ function init() {
 		if (nextField !== 0) // would hit wall
 			return false;
 
+		fireAudio.setVolume(1 - (playerPos[1] / MAZE_SIZE[0]));
+
 		if (nextPlayerPos[0] === finishPos[0] && nextPlayerPos[1] === finishPos[1]) {
 			console.log('COLLECTED GEM!');
 			scene.remove(gemMesh);
@@ -95,6 +100,23 @@ function init() {
 
 		playerPos = Array.from(nextPlayerPos);
 		camera.position.add(moveVector);
+	});
+
+	// audio effects
+	var listener = new THREE.AudioListener();
+	camera.add(listener);
+
+	// create a global audio source
+	fireAudio = new THREE.Audio(listener);
+
+	// load a sound and set it as the Audio object's buffer
+	var audioLoader = new THREE.AudioLoader();
+	audioLoader.load(audioUrl, function (buffer) {
+		fireAudio.setBuffer(buffer);
+		fireAudio.setLoop(true);
+		// fireAudio.setVolume(0.5);
+		fireAudio.setVolume(1 - (playerPos[1] / MAZE_SIZE[0]));
+		fireAudio.play();
 	});
 }
 
