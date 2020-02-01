@@ -1,0 +1,24 @@
+RULES:
+    Base Time Limit: 3h
+    Submitions: public github, only own code allowed
+    Last Wish: Each player can commment-out single "feature"
+    Retry: If **all** contestants agree, we can once rerandom
+   
+    Score:
+        - 0pts for non runnable game
+        - voting 3/pts (each player, no self votes),
+        - (-1pts) x breaking rules
+        - Kaspair™ judge -> 3pts
+
+    Awards: Pizza at the end free4all
+   
+BASE GAME:
+    3D Maze
+
+THEME:
+    Kraków
+
+MUTATIONS:
+    low resolution (<4kPx)
+    sound-based
+    side quest
