@@ -102,29 +102,23 @@ let wallsContainer;
 function addWalls(mazeArray) {
 	wallsContainer = new THREE.Object3D();
 
-	// const boundingWalls = new THREE.Mesh(
-	// 	new THREE.BoxGeometry(...MAZE_SIZE, 1),
-	// 	new THREE.MeshBasicMaterial( {color: 0xEEEEEE, side: THREE.DoubleSide} )
-	// );
-	// boundingWalls.position.x = (MAZE_SIZE[0] / 2);
-	// boundingWalls.position.y -= MAZE_SIZE[1];
-	// scene.add(boundingWalls);
+	// floors
+	// const floorGeom = new THREE.PlaneGeometry(...MAZE_SIZE);
+	// const floorMaterial = new THREE.MeshBasicMaterial({ color: 0x444444, side: THREE.DoubleSide });
+	// const ceil = new THREE.Mesh(floorGeom, floorMaterial);
+	// ceil.rotation.z = THREE.Math.degToRad(-90);
+	// const floor = ceil.clone();
+	// ceil.position.y =  1;
+	// floor.position.y = -1;
+	// scene.add(ceil).add(floor);
 
-	const floorGeom = new THREE.PlaneGeometry(...MAZE_SIZE);
-	const floorMaterial = new THREE.MeshBasicMaterial({ color: 0x444444, side: THREE.DoubleSide });
-	const ceil = new THREE.Mesh(floorGeom, floorMaterial);
-	const floor = ceil.clone();
-	ceil.position.y =  1;
-	floor.position.y = -1;
-	scene.add(ceil).add(floor);
-
+	// maze walls
 	for (let i = 0; i < mazeArray.length; i++) {
 		for (let j = 0; j < mazeArray[i].length; j++) {
 			const field = mazeArray[i][j];
 			if (field === 0) continue;
 
 			const wallGeometry = new THREE.PlaneGeometry();
-			// const wallMaterial = new THREE.MeshBasicMaterial( {color: 0xDDDDDD, side: THREE.DoubleSide} );
 			const wallMaterial = new THREE.MeshNormalMaterial({ side: THREE.DoubleSide });
 			const wall = new THREE.Mesh(wallGeometry, wallMaterial);
 
@@ -144,7 +138,6 @@ function animate() {
 
 	gemMesh.rotation.x += 0.01;
 	gemMesh.rotation.y += 0.02;
-	// wall.position.x -= 0.005;
 
 	renderer.render(scene, camera);
 
