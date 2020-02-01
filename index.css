@@ -2,6 +2,10 @@ html, body {
 	background: #111;
 }
 
+img.dragon {
+	position: absolute;
+}
+
 .centered {
     position: relative;
 	left: 50%;

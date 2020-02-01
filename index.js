@@ -13,7 +13,7 @@ const RESOLUTION = { w: 80, h: 50 };
 
 // globals
 let camera, scene, renderer;
-let geometry, material, mesh;
+let geometry, material, gemMesh;
 
 let playerPos;
 let MAZE_SIZE;
@@ -34,15 +34,16 @@ function init() {
 	scene = new THREE.Scene();
 
 	/* ---example/finish gem?--- */
-	const finishPos = [4,1];
+	const finishPos = [6, 1];
 	geometry = new THREE.BoxGeometry(0.2, 0.2, 0.2);
 	material = new THREE.MeshNormalMaterial();
-	mesh = new THREE.Mesh(geometry, material);
-	mesh.position.copy(new THREE.Vector3(finishPos[0], 0, finishPos[1]))
-	scene.add(mesh);
+	gemMesh = new THREE.Mesh(geometry, material);
+	gemMesh.position.copy(new THREE.Vector3(finishPos[0], 0, finishPos[1]))
+	scene.add(gemMesh);
 	/* ---example--- */
 
-	renderer = new THREE.WebGLRenderer({ antialias: false });
+	renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true });
+	// renderer.setClearColor( 0x000000, 0 );
 	renderer.setSize(RESOLUTION.w, RESOLUTION.h);
 
 	renderer.domElement.id = 'renderer';
@@ -52,11 +53,13 @@ function init() {
 
 	// generate maze geometry
 	const maze = [
-		[2, 2, 0, 2, 2, 2, 2],
-		[1, 0, 0, 1, 0, 1, 1],
-		[1, 0, 0, 1, 0, 1, 1],
-		[1, 0, 0, 0, 0, 0, 1],
-		[2, 2, 2, 2, 2, 2, 2],
+		[2, 2, 0, 2, 2, 2, 2, 2],
+		[1, 0, 0, 1, 0, 1, 0, 1],
+		[1, 0, 0, 1, 0, 0, 0, 1],
+		[1, 0, 0, 1, 0, 1, 0, 1],
+		[1, 0, 0, 0, 0, 1, 0, 1],
+		[1, 0, 0, 1, 0, 1, 0, 1],
+		[2, 2, 2, 2, 2, 2, 2, 2],
 	];
 	MAZE_SIZE = [maze.length, maze[0].length];
 	const playerStart = [4, 2]; // [x, y]
@@ -67,10 +70,10 @@ function init() {
 	// input controls
 	document.addEventListener('keydown', event => {
 		const movement = {
-			'w': [ 0,  0, -1],
-			's': [ 0,  0, +1],
-			'a': [-1,  0,  0],
-			'd': [+1,  0,  0],
+			'w': [0, 0, -1],
+			's': [0, 0, +1],
+			'a': [-1, 0, 0],
+			'd': [+1, 0, 0],
 		};
 		const moveVector = new THREE.Vector3(...movement[event.key]);
 		if (moveVector === undefined) // pressed other key
@@ -80,11 +83,16 @@ function init() {
 		nextPlayerPos[0] += moveVector.x;
 		nextPlayerPos[1] += moveVector.z;
 		const nextField = maze[nextPlayerPos[1]][nextPlayerPos[0]];
-		console.log('NEXT:', playerPos, moveVector, nextPlayerPos, nextField)
+		// console.log('NEXT:', playerPos, moveVector, nextPlayerPos, nextField)
 
 		if (nextField !== 0) // would hit wall
 			return false;
-	
+
+		if (nextPlayerPos[0] === finishPos[0] && nextPlayerPos[1] === finishPos[1]) {
+			console.log('COLLECTED GEM!');
+			scene.remove(gemMesh);
+		}
+
 		playerPos = Array.from(nextPlayerPos);
 		camera.position.add(moveVector);
 	});
@@ -102,6 +110,14 @@ function addWalls(mazeArray) {
 	// boundingWalls.position.y -= MAZE_SIZE[1];
 	// scene.add(boundingWalls);
 
+	const floorGeom = new THREE.PlaneGeometry(...MAZE_SIZE);
+	const floorMaterial = new THREE.MeshBasicMaterial({ color: 0x444444, side: THREE.DoubleSide });
+	const ceil = new THREE.Mesh(floorGeom, floorMaterial);
+	const floor = ceil.clone();
+	ceil.position.y =  1;
+	floor.position.y = -1;
+	scene.add(ceil).add(floor);
+
 	for (let i = 0; i < mazeArray.length; i++) {
 		for (let j = 0; j < mazeArray[i].length; j++) {
 			const field = mazeArray[i][j];
@@ -112,7 +128,7 @@ function addWalls(mazeArray) {
 			const wallMaterial = new THREE.MeshNormalMaterial({ side: THREE.DoubleSide });
 			const wall = new THREE.Mesh(wallGeometry, wallMaterial);
 
-			if (field === 1) wall.rotateY(Math.PI/2);
+			if (field === 1) wall.rotateY(Math.PI / 2);
 			wall.position.z = i + 0.01;
 			wall.position.x = j + 0.01;
 			wallsContainer.add(wall);
@@ -126,8 +142,8 @@ function animate() {
 
 	requestAnimationFrame(animate);
 
-	mesh.rotation.x += 0.01;
-	mesh.rotation.y += 0.02;
+	gemMesh.rotation.x += 0.01;
+	gemMesh.rotation.y += 0.02;
 	// wall.position.x -= 0.005;
 
 	renderer.render(scene, camera);
